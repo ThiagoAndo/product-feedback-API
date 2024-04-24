@@ -1,8 +1,11 @@
 import * as mongoDB from "mongodb";
 import * as dotenv from "dotenv";
 import User from "../models/user";
+import { userSchema } from "../models/user";
+import Request from "../models/request";
+import { requestSchema } from "../models/request";
 
-export const collections: { user?: mongoDB.Collection<User> } = {};
+export const collections: [ user?: mongoDB.Collection<User>,request?: mongoDB.Collection<Request> ] = [];
 
 export async function connectToDatabase() {
   // Pulls in the .env file so it can be accessed from process.env. No path as .env is in root, the default location
@@ -24,52 +27,25 @@ export async function connectToDatabase() {
   const productCollection = db.collection<User>(process.env.COLLECTION_NAME);
 
   // Persist the connection to the Games collection
-  collections.user = productCollection;
+  collections[0] = productCollection;
 
   console.log(
     `Successfully connected to database: ${db.databaseName} and collection: ${productCollection.collectionName}`
   );
 }
 
-// Update our existing collection with JSON schema validation so we know our documents will always match the shape of our Game model, even if added elsewhere.
-// For more information about schema validation, see this blog series: https://www.mongodb.com/blog/post/json-schema-validation--locking-down-your-model-the-smart-way
 async function applySchemaValidation(db: mongoDB.Db) {
-  const jsonSchema = {
-    $jsonSchema: {
-      bsonType: "object",
-      required: ["id", "image", "name", "username"],
-      additionalProperties: false,
-      properties: {
-        _id: {},
-        id: {
-          bsonType: "string",
-          description: "'id' is required and is a string",
-        },
-        image: {
-          bsonType: "string",
-          description: "'image' is required and is a string",
-        },
-        name: {
-          bsonType: "string",
-          description: "'name' is required and is a string",
-        },
-        username: {
-          bsonType: "string",
-          description: "'username' is required and is a string",
-        },
-      },
-    },
-  };
+  
   // Try applying the modification to the collection, if the collection doesn't exist, create it
   await db
     .command({
       collMod: "user",
-      validator: jsonSchema,
+      validator: userSchema,
     })
     .catch(async (error: mongoDB.MongoServerError) => {
       if (error.codeName === "NamespaceNotFound") {
-        await db.createCollection(process.env.GAMES_COLLECTION_NAME, {
-          validator: jsonSchema,
+        await db.createCollection(process.env.COLLECTION_NAME, {
+          validator: userSchema,
         });
       }
     });
