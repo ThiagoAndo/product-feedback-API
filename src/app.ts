@@ -4,15 +4,12 @@ import { userRouter } from "./routes/products.router";
 import { requestRouter } from "./routes/request.routes";
 
 const app = express();
-const port = 8080; // default port to listen
+const port = 8080; 
 
 connectToDatabase()
     .then(() => {
-        // send all calls to /games to our gamesRouter
         app.use("/user", userRouter);
         app.use("/request", requestRouter);
-
-        // start the Express server
         app.listen(port, () => {
             console.log(`Server started at http://localhost:${port}`);
         });
