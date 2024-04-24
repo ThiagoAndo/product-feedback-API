@@ -1,6 +1,6 @@
 import express from "express";
 import { connectToDatabase } from "./services/database.service";
-import { gamesRouter } from "./routes/games.router";
+import { userRouter } from "./routes/products.router";
 
 const app = express();
 const port = 8080; // default port to listen
@@ -8,7 +8,7 @@ const port = 8080; // default port to listen
 connectToDatabase()
     .then(() => {
         // send all calls to /games to our gamesRouter
-        app.use("/games", gamesRouter);
+        app.use("/product", userRouter);
 
         // start the Express server
         app.listen(port, () => {
