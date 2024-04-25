@@ -5,7 +5,15 @@ import { userSchema } from "../models/user";
 import Request from "../models/request";
 import { requestSchema } from "../models/request";
 
-export const collections: [ user?: mongoDB.Collection<User>,request?: mongoDB.Collection<Request> ] = [];
+type schemas = {
+  coll: string;
+  schema: object;
+};
+
+export const collections: [
+  user?: mongoDB.Collection<User>,
+  request?: mongoDB.Collection<Request>
+] = [];
 
 export async function connectToDatabase() {
   // Pulls in the .env file so it can be accessed from process.env. No path as .env is in root, the default location
@@ -21,31 +29,40 @@ export async function connectToDatabase() {
   const db = client.db(process.env.DB_NAME);
 
   // Apply schema validation to the collection
-  await applySchemaValidation(db);
+  [
+    { coll: process.env.COLLECTION_NAME_U, schema: userSchema },
+    { coll: process.env.COLLECTION_NAME_PR, schema: requestSchema },
+  ].forEach(async (check) => {
+    await applySchemaValidation(db, check);
+  });
 
   // Connect to the collection with the specific name from .env, found in the database previously specified
-  const productCollection = db.collection<User>(process.env.COLLECTION_NAME);
+  const userCollection = db.collection<User>(process.env.COLLECTION_NAME);
+  const requestCollection = db.collection<Request>(
+    process.env.COLLECTION_NAME_PR
+  );
 
   // Persist the connection to the Games collection
-  collections[0] = productCollection;
+  collections[0] = userCollection;
+  collections[1] = requestCollection;
 
   console.log(
-    `Successfully connected to database: ${db.databaseName} and collection: ${productCollection.collectionName}`
+    `Successfully connected to database: ${db.databaseName} and collection: ${requestCollection.collectionName}`
   );
 }
 
-async function applySchemaValidation(db: mongoDB.Db) {
-  
+async function applySchemaValidation(db: mongoDB.Db, validate: schemas) {
   // Try applying the modification to the collection, if the collection doesn't exist, create it
+  console.log(validate)
   await db
     .command({
-      collMod: "user",
-      validator: userSchema,
+      collMod: validate.coll,
+      validator: validate.schema,
     })
     .catch(async (error: mongoDB.MongoServerError) => {
       if (error.codeName === "NamespaceNotFound") {
-        await db.createCollection(process.env.COLLECTION_NAME, {
-          validator: userSchema,
+        await db.createCollection(validate.coll, {
+          validator: validate.schema,
         });
       }
     });
