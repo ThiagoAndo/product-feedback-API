@@ -6,7 +6,7 @@ import { commentRouter } from "./routes/comment.route";
 import { repliRouter } from "./routes/replie.route";
 
 const app = express();
-const port = 8080; 
+const port = 3000; 
 
 connectToDatabase()
     .then(() => {
