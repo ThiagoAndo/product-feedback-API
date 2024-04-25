@@ -5,7 +5,7 @@ import Repli from "../models/replies";
 
 export interface Read {
   read: "many" | "one";
-  field: {id:number}|{username:string};
+  field: {id:number}|{username:string}|{key:null};
   index: number;
 }
 
