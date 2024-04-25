@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
 
-export default interface Comment {
+export default interface Repli {
   _id?: ObjectId;
   content: string;
   replyingTo: string;
   username: string;
   comment_id: number;
 }
-export const commentSchema = {
+export const repliSchema = {
   $jsonSchema: {
     bsonType: "object",
     required: ["content", "replyingTo", "username", "comment_id"],

@@ -3,9 +3,11 @@ import * as dotenv from "dotenv";
 import User from "../models/user";
 import Request from "../models/request";
 import Comment from "../models/comments";
+import Repli from "../models/replies";
 import { userSchema } from "../models/user";
 import { requestSchema } from "../models/request";
 import { commentSchema } from "../models/comments";
+import { repliSchema } from "../models/replies";
 
 interface schemas {
   coll: string;
@@ -15,7 +17,8 @@ interface schemas {
 export const collections: [
   user?: mongoDB.Collection<User>,
   request?: mongoDB.Collection<Request>,
-  comment?:mongoDB.Collection<Comment>
+  comment?: mongoDB.Collection<Comment>,
+  repli?: mongoDB.Collection<Repli>
 ] = [];
 
 export async function connectToDatabase() {
@@ -28,6 +31,7 @@ export async function connectToDatabase() {
     { coll: process.env.COLLECTION_NAME_U, schema: userSchema },
     { coll: process.env.COLLECTION_NAME_PR, schema: requestSchema },
     { coll: process.env.COLLECTION_NAME_C, schema: commentSchema },
+    { coll: process.env.COLLECTION_NAME_R, schema: repliSchema },
   ];
   // Connect to the cluster
   await client.connect();
@@ -46,14 +50,17 @@ export async function connectToDatabase() {
   const requestCollection = db.collection<Request>(
     process.env.COLLECTION_NAME_PR
   );
-   const commentCollection = db.collection<Comment>(
-     process.env.COLLECTION_NAME_C
-   );
+  const commentCollection = db.collection<Comment>(
+    process.env.COLLECTION_NAME_C
+  );
+  const repliCollection = db.collection<Repli>(process.env.COLLECTION_NAME_R);
 
   // Persist the connection to the Games collection
+
   collections[0] = userCollection;
   collections[1] = requestCollection;
   collections[2] = commentCollection;
+  collections[3] = repliCollection;
 
   console.log(`Successfully connected to database: ${db.databaseName} `);
 }
