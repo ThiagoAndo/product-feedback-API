@@ -1,7 +1,7 @@
 import express from "express";
 import { connectToDatabase } from "./services/database.service";
-import { userRouter } from "./routes/user.router";
-import { requestRouter } from "./routes/request.routes";
+import { userRouter } from "./routes/user.route";
+import { requestRouter } from "./routes/request.route";
 
 const app = express();
 const port = 8080; 

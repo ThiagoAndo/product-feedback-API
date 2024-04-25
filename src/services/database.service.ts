@@ -21,7 +21,7 @@ export async function connectToDatabase() {
 
   // Create a new MongoDB client with the connection string from .env
   const client = new mongoDB.MongoClient(process.env.DB_CONN_STRING);
-  const checkSchema: schemas []= [
+  const checkSchema: schemas[] = [
     { coll: process.env.COLLECTION_NAME_U, schema: userSchema },
     { coll: process.env.COLLECTION_NAME_PR, schema: requestSchema },
   ];
@@ -47,9 +47,7 @@ export async function connectToDatabase() {
   collections[0] = userCollection;
   collections[1] = requestCollection;
 
-  console.log(
-    `Successfully connected to database: ${db.databaseName} and collection: ${requestCollection.collectionName}`
-  );
+  console.log(`Successfully connected to database: ${db.databaseName} `);
 }
 
 async function applySchemaValidation(db: mongoDB.Db, schema: schemas) {

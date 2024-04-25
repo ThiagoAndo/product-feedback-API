@@ -1,36 +1,42 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+// import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
 
 export const userRouter = express.Router();
 
 userRouter.use(express.json());
 
-userRouter.get("/", async (_req: Request, res: Response) => {
+// userRouter.get("/", async (_req: Request, res: Response) => {
+//   try {
+//     const users = await collections[0].find({}).toArray();
+//     res.status(200).send(users);
+//   } catch (error: any) {
+//     res.status(500).send(error.message);
+//   }
+// });
+
+
+userRouter.get("/:userName", async (req: Request, res: Response) => {
+  const userName = req?.params?.userName;
 
   try {
-    const users = await collections[0].find({}).toArray();
-    res.status(200).send(users);
-  } catch (error: any) {
-    res.status(500).send(error.message);
+    // _id in MongoDB is an objectID type so we need to find our specific document by querying
+    const query = { username: userName };
+    const user = await collections[0].findOne(query);
+
+    if (user) {
+      res.status(200).send(user);
+    } else {
+      res
+        .status(404)
+        .send(
+          `Unable to find matching document with user name: ${req.params.userName}`
+        );
+    }
+  } catch (error) {
+    res.status(500).send(error?.message);
   }
 });
-// // Example route: http://localhost:8080/product/610aaf458025d42e7ca9fcd0
-// gamesRouter.get("/:id", async (req: Request, res: Response) => {
-//     const id = req?.params?.id;
-
-//     try {
-//         // _id in MongoDB is an objectID type so we need to find our specific document by querying
-//         const query = { _id: new ObjectId(id) };
-//         const game: Game = await collections.games.findOne(query);
-
-//         if (game) {
-//             res.status(200).send(game);
-//         }
-//     } catch (error) {
-//         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
-//     }
-// });
 
 // gamesRouter.post("/", async (req: Request, res: Response) => {
 //     try {
