@@ -5,10 +5,10 @@ import { userSchema } from "../models/user";
 import Request from "../models/request";
 import { requestSchema } from "../models/request";
 
-type schemas = {
+interface schemas {
   coll: string;
   schema: object;
-};
+}
 
 export const collections: [
   user?: mongoDB.Collection<User>,
@@ -21,7 +21,10 @@ export async function connectToDatabase() {
 
   // Create a new MongoDB client with the connection string from .env
   const client = new mongoDB.MongoClient(process.env.DB_CONN_STRING);
-
+  const checkSchema: schemas []= [
+    { coll: process.env.COLLECTION_NAME_U, schema: userSchema },
+    { coll: process.env.COLLECTION_NAME_PR, schema: requestSchema },
+  ];
   // Connect to the cluster
   await client.connect();
 
@@ -29,7 +32,10 @@ export async function connectToDatabase() {
   const db = client.db(process.env.DB_NAME);
 
   // Apply schema validation to the collection
-  await applySchemaValidation(db);
+
+  checkSchema.forEach(async (schema) => {
+    await applySchemaValidation(db, schema);
+  });
 
   // Connect to the collection with the specific name from .env, found in the database previously specified
   const userCollection = db.collection<User>(process.env.COLLECTION_NAME_U);
@@ -46,17 +52,17 @@ export async function connectToDatabase() {
   );
 }
 
-async function applySchemaValidation(db: mongoDB.Db, schema:schemas) {
+async function applySchemaValidation(db: mongoDB.Db, schema: schemas) {
   // Try applying the modification to the collection, if the collection doesn't exist, create it
   await db
     .command({
-      collMod: "productRequests",
-      validator: requestSchema,
+      collMod: schema.coll,
+      validator: schema.schema,
     })
     .catch(async (error: mongoDB.MongoServerError) => {
       if (error.codeName === "NamespaceNotFound") {
-        await db.createCollection(process.env.COLLECTION_NAME, {
-          validator: userSchema,
+        await db.createCollection(schema.coll, {
+          validator: schema.schema,
         });
       }
     });
