@@ -10,10 +10,9 @@ type schemas = {
   schema: object;
 };
 
-export const collections: [
-  user?: mongoDB.Collection<User>,
-  request?: mongoDB.Collection<Request>
-] = [];
+export const collections: {
+  user?: mongoDB.Collection<User>;
+} = {};
 
 export async function connectToDatabase() {
   // Pulls in the .env file so it can be accessed from process.env. No path as .env is in root, the default location
@@ -43,8 +42,8 @@ export async function connectToDatabase() {
   );
 
   // Persist the connection to the Games collection
-  collections[0] = userCollection;
-  collections[1] = requestCollection;
+  collections.user = userCollection;
+  //   collections[1] = requestCollection;
 
   console.log(
     `Successfully connected to database: ${db.databaseName} and collection: ${requestCollection.collectionName}`
@@ -53,11 +52,10 @@ export async function connectToDatabase() {
 
 async function applySchemaValidation(db: mongoDB.Db, validate: schemas) {
   // Try applying the modification to the collection, if the collection doesn't exist, create it
-  console.log(validate)
   await db
     .command({
-      collMod: validate.coll,
-      validator: validate.schema,
+      collMod:  'user',
+      validator: userSchema,
     })
     .catch(async (error: mongoDB.MongoServerError) => {
       if (error.codeName === "NamespaceNotFound") {
