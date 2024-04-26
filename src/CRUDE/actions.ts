@@ -1,11 +1,12 @@
 import { collections } from "../services/database.service";
-import { Controler } from "../models/CRUDE";
+import { Controler, type Insert, allInterface } from "../models/CRUDE";
 import User from "../models/user";
-import Request, { type request } from "../models/request";
+import Request from "../models/request";
 import Comment from "../models/comments";
 import Repli from "../models/replies";
-import { type mongoRet } from "../models/CRUDE";
+import { objRequest } from "../models/request";
 
+import { type mongoRet } from "../models/CRUDE";
 export async function read(action: Controler) {
   let data: mongoRet;
 
@@ -23,12 +24,9 @@ export async function read(action: Controler) {
   return;
 }
 
-export async function create(data: request, action: Controler) {
-  let retDB: mongoRet;
-
+export async function create(data: any, action: Insert) {
   try {
-    retDB = await collections[action.index].find({}).toArray();
-
+    const retDB = await collections[action.index].insertOne(data);
     return retDB;
   } catch (error) {
     console.log(error.message);
@@ -37,7 +35,10 @@ export async function create(data: request, action: Controler) {
   return;
 }
 
-export async function updatePartial(action: Read) {
+const newR = new objRequest(1, "wwf", "dfa", 1, "dsf", "dasdf");
+create(newR, 1);
+
+export async function updatePartial(action: Controler) {
   let data: mongoRet;
 
   try {
