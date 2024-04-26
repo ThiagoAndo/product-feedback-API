@@ -1,8 +1,6 @@
 import { request } from "http";
 import { ObjectId } from "mongodb";
 
-
-
 export default interface Request {
   _id?: ObjectId;
   id: number;
@@ -15,30 +13,23 @@ export default interface Request {
 
 export class objRequest {
   constructor(
-    private id: number,
-    private title: string,
-    private category: string,
-    private upvotes: number,
-    private status: string,
-    private description: string
+    public id: number,
+    public title: string,
+    public category: string,
+    public upvotes: number,
+    public status: string,
+    public description: string
   ) {}
 }
 
 export const requestSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: [
-      "id",
-      "title",
-      "category",
-      "upvotes",
-      "status",
-      "description",
-    ],
+    required: ["id", "title", "category", "upvotes", "status", "description"],
     additionalProperties: false,
     properties: {
       _id: {},
-    
+
       id: {
         bsonType: "number",
         description: "'id' is required and is a number",

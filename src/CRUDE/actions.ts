@@ -20,6 +20,8 @@ export async function readDoc(action: Controler) {
   } catch (error) {
     console.log(error.message);
   }
+
+  return;
 }
 
 export async function createDoc(data: any, action: Insert) {
@@ -44,4 +46,6 @@ export async function updateDoc(
   } catch (error) {
     return error.message;
   }
+
+  return;
 }
