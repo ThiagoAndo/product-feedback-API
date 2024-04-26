@@ -3,12 +3,13 @@ import Request from "../models/request";
 import Comment from "../models/comments";
 import Repli from "../models/replies";
 
-export interface Controler {
-  read: "many" | "one";
-  field: {id:number}|{username:string}|{key:null};
-  index: number;
+export type Insert = {
+  index: 0 | 1 | 2 | 3;
+};
+export interface Controler extends Insert {
+  read: "many" | "one" | null;
+  field: { id: number } | { username: string } | { key: null };
 }
-
 
 export type mongoRet =
   | User

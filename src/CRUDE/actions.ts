@@ -1,12 +1,13 @@
 import { collections } from "../services/database.service";
-import { Controler } from "../models/CRUDE";
+import { Controler, type Insert } from "../models/CRUDE";
 import User from "../models/user";
-import Request, { type request } from "../models/request";
+import Request from "../models/request";
 import Comment from "../models/comments";
 import Repli from "../models/replies";
-import { type mongoRet } from "../models/CRUDE";
+import { objRequest } from "../models/request";
 
-export async function read(action: Controler) {
+import { type mongoRet } from "../models/CRUDE";
+export async function readDoc(action: Controler) {
   let data: mongoRet;
 
   try {
@@ -23,49 +24,27 @@ export async function read(action: Controler) {
   return;
 }
 
-export async function create(data: request, action: Controler) {
-  let retDB: mongoRet;
-
+export async function createDoc(data: any, action: Insert) {
   try {
-    retDB = await collections[action.index].find({}).toArray();
+    const retDB = await collections[action.index].insertOne(data);
+    return retDB;
+  } catch (error) {
+    return error.message;
+  }
+}
+
+export async function updateDoc(
+  data: User | Comment | Request | Repli,
+  action: Controler
+) {
+  try {
+    const retDB = await collections[action.index].updateOne(action.field, {
+      $set: data,
+    });
 
     return retDB;
   } catch (error) {
-    console.log(error.message);
-  }
-
-  return;
-}
-
-export async function updatePartial(action: Read) {
-  let data: mongoRet;
-
-  try {
-    if (action.read === "many") {
-      data = await collections[action.index].find({}).toArray();
-    } else {
-      data = await collections[action.index].findOne(action.field);
-    }
-    return data;
-  } catch (error) {
-    console.log(error.message);
-  }
-
-  return;
-}
-
-export async function update(action: Read) {
-  let data: mongoRet;
-
-  try {
-    if (action.read === "many") {
-      data = await collections[action.index].find({}).toArray();
-    } else {
-      data = await collections[action.index].findOne(action.field);
-    }
-    return data;
-  } catch (error) {
-    console.log(error.message);
+    return error.message;
   }
 
   return;
