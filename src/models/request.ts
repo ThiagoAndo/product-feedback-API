@@ -1,4 +1,15 @@
+import { request } from "http";
 import { ObjectId } from "mongodb";
+
+export type request = {
+  user_id: string;
+  id: number;
+  title: string;
+  category: string;
+  upvotes: number;
+  status: string;
+  description: string;
+};
 
 export default interface Request {
   _id?: ObjectId;
@@ -11,6 +22,17 @@ export default interface Request {
   description: string;
 }
 
+export class objRequest {
+  constructor(
+    private user_id: string,
+    private id: number,
+    private title: string,
+    private category: string,
+    private upvotes: number,
+    private status: string,
+    private description: string
+  ) {}
+}
 
 export const requestSchema = {
   $jsonSchema: {
