@@ -20,12 +20,9 @@ export async function readDoc(action: Controler) {
   } catch (error) {
     console.log(error.message);
   }
-
-  return;
 }
 
 export async function createDoc(data: any, action: Insert) {
-  console.log(action.index);
   try {
     const retDB = await collections[action.index].insertOne(data);
     return retDB;
@@ -34,36 +31,17 @@ export async function createDoc(data: any, action: Insert) {
   }
 }
 
-export async function updatePartial(action: Controler) {
-  let data: mongoRet;
-
+export async function updateDoc(
+  data: User | Comment | Request | Repli,
+  action: Controler
+) {
   try {
-    if (action.read === "many") {
-      data = await collections[action.index].find({}).toArray();
-    } else {
-      data = await collections[action.index].findOne(action.field);
-    }
-    return data;
+    const retDB = await collections[action.index].updateOne(action.field, {
+      $set: data,
+    });
+
+    return retDB;
   } catch (error) {
-    console.log(error.message);
+    return error.message;
   }
-
-  return;
-}
-
-export async function update(action: Controler) {
-  let data: mongoRet;
-
-  try {
-    if (action.read === "many") {
-      data = await collections[action.index].find({}).toArray();
-    } else {
-      data = await collections[action.index].findOne(action.field);
-    }
-    return data;
-  } catch (error) {
-    console.log(error.message);
-  }
-
-  return;
 }
