@@ -4,24 +4,21 @@ import User from "../models/user";
 import Request from "../models/request";
 import Comment from "../models/comments";
 import Repli from "../models/replies";
-import { objRequest } from "../models/request";
 
 import { type mongoRet } from "../models/CRUDE";
 export async function readDoc(action: Controler) {
-  let data: mongoRet;
+  let result: mongoRet;
 
   try {
     if (action.read === "many") {
-      data = await collections[action.index].find({}).toArray();
+      result = await collections[action.index].find({}).toArray();
     } else {
-      data = await collections[action.index].findOne(action.field);
+      result = await collections[action.index].findOne(action.field);
     }
-    return data;
+    return result;
   } catch (error) {
     console.log(error.message);
   }
-
-  return;
 }
 
 export async function createDoc(data: any, action: Insert) {
@@ -38,14 +35,22 @@ export async function updateDoc(
   action: Controler
 ) {
   try {
-    const retDB = await collections[action.index].updateOne(action.field, {
+    const result = await collections[action.index].updateOne(action.field, {
       $set: data,
     });
 
-    return retDB;
+    return result;
   } catch (error) {
     return error.message;
   }
+}
 
-  return;
+export async function deleteDoc(action: Controler) {
+  try {
+    const result = await collections[action.index].deleteOne(action.field);
+
+    return result;
+  } catch (error) {
+    return error.message;
+  }
 }
