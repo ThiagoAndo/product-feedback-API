@@ -71,7 +71,7 @@ requestRouter.put("/:id", async (req: Request, res: Response) => {
     const result = await updateDoc(updR, query);
 
     result
-      ? res.status(200).send(result)
+      ? res.status(200).send(updR)
       : res.status(304).send(`Game with id: ${id} not updated`);
   } catch (error) {
     console.error(error.message);
