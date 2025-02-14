@@ -10,6 +10,14 @@ const port = 8080;
 
 connectToDatabase()
     .then(() => {
+        app.use((req, res, next) => {
+          res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+          res.setHeader("Access-Control-Allow-Origin", "*");
+     
+        
+
+          next();
+        });
         app.use("/user", userRouter);
         app.use("/request", requestRouter);
         app.use("/comment", commentRouter);

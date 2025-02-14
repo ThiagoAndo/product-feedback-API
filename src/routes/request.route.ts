@@ -40,7 +40,8 @@ requestRouter.post("/", async (req: Request, res: Response) => {
     d.category,
     +d.upvotes,
     d.status,
-    d.description
+    d.description,
+    +d.numCom
   );
   const query: Insert = { index: 1 };
 
@@ -67,7 +68,8 @@ requestRouter.put("/:id", async (req: Request, res: Response) => {
       d.category,
       +d.upvotes,
       d.status,
-      d.description
+      d.description,
+      +d.numCom
     );
     // $set adds or updates all fields
     const result = await updateDoc(updR, query);

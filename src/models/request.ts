@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-
 export default interface Request {
   _id?: ObjectId;
   id: number;
@@ -8,6 +7,7 @@ export default interface Request {
   upvotes: number;
   status: string;
   description: string;
+  numCom: number;
 }
 
 export class objRequest {
@@ -17,14 +17,23 @@ export class objRequest {
     public category: string,
     public upvotes: number,
     public status: string,
-    public description: string
+    public description: string,
+    public numCom: number
   ) {}
 }
 
 export const requestSchema = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["id", "title", "category", "upvotes", "status", "description"],
+    required: [
+      "id",
+      "title",
+      "category",
+      "upvotes",
+      "status",
+      "description",
+      "numCom",
+    ],
     additionalProperties: false,
     properties: {
       _id: {},
@@ -52,6 +61,10 @@ export const requestSchema = {
       description: {
         bsonType: "string",
         description: "'description' is required and is a string",
+      },
+      numCom: {
+        bsonType: "number",
+        description: "'numCom' is required and is a string",
       },
     },
   },
